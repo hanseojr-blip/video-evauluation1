@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>영상 제작 수행평가 - 학생 평가 시스템</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .step {
+            display: none;
+        }
+        
+        .step.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+            font-size: 15px;
+        }
+        
+        .required {
+            color: #e74c3c;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .score-input-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .score-input-group input {
+            flex: 1;
+        }
+        
+        .score-label {
+            font-size: 13px;
+            color: #666;
+            min-width: 80px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        
+        .info-box p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .evaluation-item {
+            background: #f8f9fa;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .evaluation-item h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .success-message {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .success-message h2 {
+            color: #27ae60;
+            margin-bottom: 20px;
+            font-size: 32px;
+        }
+        
+        .success-message p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        .alert {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📹 영상 제작 수행평가</h1>
+            <p>학생 평가 시스템</p>
+        </div>
+        
+        <div class="content">
+            <!-- 진행률 바 -->
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+            </div>
+            
+            <!-- Step 1: 기본 정보 입력 -->
+            <div class="step active" id="step1">
+                <h2 style="margin-bottom: 20px; color: #333;">1단계: 기본 정보 입력</h2>
+                
+                <div class="info-box">
+                    <p><strong>📌 평가 안내</strong></p>
+                    <p>• 본인의 팀과 이름을 정확히 입력해주세요</p>
+                    <p>• 모든 평가는 익명으로 처리됩니다</p>
+                    <p>• 공정하고 객관적인 평가를 부탁드립니다</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>소속 팀 <span class="required">*</span></label>
+                    <select id="studentTeam" required>
+                        <option value="">팀을 선택하세요</option>
+                        <option value="1팀">1팀</option>
+                        <option value="2팀">2팀</option>
+                        <option value="3팀">3팀</option>
+                        <option value="4팀">4팀</option>
+                        <option value="5팀">5팀</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>이름 <span class="required">*</span></label>
+                    <input type="text" id="studentName" placeholder="이름을 입력하세요" required>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn-primary" onclick="goToStep(2)">다음 단계로 →</button>
+                </div>
+            </div>
+            
+            <!-- Step 2: 조원 참여도 평가 -->
+            <div class="step" id="step2">
+                <h2 style="margin-bottom: 20px; color: #333;">2단계: 조원 참여도 평가 (15점)</h2>
+                
+                <div class="alert">
+                    ⚠️ <strong>본인을 제외한</strong> 팀원들의 참여도를 평가해주세요
+                </div>
+                
+                <div id="peerEvaluationContainer"></div>
+                
+                <div class="button-group">
+                    <button class="btn-secondary" onclick="goToStep(1)">← 이전</button>
+                    <button class="btn-primary" onclick="goToStep(3)">다음 단계로 →</button>
+                </div>
+            </div>
+            
+            <!-- Step 3: 타 조 작품 평가 -->
+            <div class="step" id="step3">
+                <h2 style="margin-bottom: 20px; color: #333;">3단계: 타 조 작품 평가 (15점)</h2>
+                
+                <div class="alert">
+                    ⚠️ <strong>자신의 팀을 제외한</strong> 다른 팀들의 작품을 평가해주세요
+                </div>
+                
+                <div id="teamWorkEvaluationContainer"></div>
+                
+                <div class="button-group">
+                    <button class="btn-secondary" onclick="goToStep(2)">← 이전</button>
+                    <button class="btn-primary" onclick="submitEvaluation()">평가 제출하기</button>
+                </div>
+            </div>
+            
+            <!-- Step 4: 완료 -->
+            <div class="step" id="step4">
+                <div class="success-message">
+                    <h2>✅ 평가 완료!</h2>
+                    <p>소중한 평가를 제출해주셔서 감사합니다.</p>
+                    <p>제출하신 평가는 수행평가 점수 산출에 반영됩니다.</p>
+                    <br>
+                    <p style="color: #999; font-size: 14px;">이 창을 닫으셔도 됩니다.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 팀별 학생 명단
+        const teamMembers = {
+            '1팀': ['이예지', '김수현', '이윤제', '전유하', '김경록'],
+            '2팀': ['김가현', '김태희', '이채현', '장채희'],
+            '3팀': ['신지은', '은현아', '최수현', '오예진'],
+            '4팀': ['윤별', '황예지'],
+            '5팀': ['박아현', '김규빈', '김지성', '정재윤']
+        };
+        
+        let currentStep = 1;
+        let evaluationData = {
+            studentTeam: '',
+            studentName: '',
+            peerEvaluations: [],
+            teamWorkEvaluations: []
+        };
+        
+        // 단계 이동
+        function goToStep(step) {
+            // 유효성 검사
+            if (step === 2 && currentStep === 1) {
+                const team = document.getElementById('studentTeam').value;
+                const name = document.getElementById('studentName').value;
+                
+                if (!team || !name) {
+                    alert('팀과 이름을 모두 입력해주세요.');
+                    return;
+                }
+                
+                evaluationData.studentTeam = team;
+                evaluationData.studentName = name;
+                
+                // 조원 평가 폼 생성
+                createPeerEvaluationForms();
+            }
+            
+            if (step === 3 && currentStep === 2) {
+                // 조원 평가 데이터 수집 및 유효성 검사
+                if (!collectPeerEvaluations()) {
+                    alert('모든 조원에 대한 평가를 완료해주세요.');
+                    return;
+                }
+                
+                // 타 조 작품 평가 폼 생성
+                createTeamWorkEvaluationForms();
+            }
+            
+            // 단계 전환
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step' + step).classList.add('active');
+            currentStep = step;
+            
+            // 진행률 업데이트
+            updateProgress(step);
+            
+            // 맨 위로 스크롤
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // 진행률 업데이트
+        function updateProgress(step) {
+            const progress = (step - 1) / 3 * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+        
+        // 조원 평가 폼 생성
+        function createPeerEvaluationForms() {
+            const container = document.getElementById('peerEvaluationContainer');
+            container.innerHTML = '';
+            
+            const team = evaluationData.studentTeam;
+            const name = evaluationData.studentName;
+            const members = teamMembers[team].filter(m => m !== name);
+            
+            members.forEach((member, index) => {
+                const div = document.createElement('div');
+                div.className = 'evaluation-item';
+                div.innerHTML = `
+                    <h3>${member} 평가</h3>
+                    <div class="form-group">
+                        <label>촬영 과정 참여도 (0~6점) <span class="required">*</span></label>
+                        <div class="score-input-group">
+                            <input type="number" id="peer_filming_${index}" min="0" max="6" step="1" placeholder="0~6" required>
+                            <span class="score-label">/ 6점</span>
+                        </div>
+                        <p style="font-size: 12px; color: #666; margin-top: 5px;">촬영 계획, 장소 섭외, 촬영 진행 등</p>
+                    </div>
+                    <div class="form-group">
+                        <label>편집 작업 기여도 (0~9점) <span class="required">*</span></label>
+                        <div class="score-input-group">
+                            <input type="number" id="peer_editing_${index}" min="0" max="9" step="1" placeholder="0~9" required>
+                            <span class="score-label">/ 9점</span>
+                        </div>
+                        <p style="font-size: 12px; color: #666; margin-top: 5px;">영상 편집, 자막 작업, 효과 추가 등</p>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        // 조원 평가 데이터 수집
+        function collectPeerEvaluations() {
+            const team = evaluationData.studentTeam;
+            const name = evaluationData.studentName;
+            const members = teamMembers[team].filter(m => m !== name);
+            
+            evaluationData.peerEvaluations = [];
+            
+            for (let i = 0; i < members.length; i++) {
+                const filmingScore = document.getElementById(`peer_filming_${i}`).value;
+                const editingScore = document.getElementById(`peer_editing_${i}`).value;
+                
+                if (!filmingScore || !editingScore) {
+                    return false;
+                }
+                
+                if (filmingScore < 0 || filmingScore > 6 || editingScore < 0 || editingScore > 9) {
+                    alert('점수는 지정된 범위 내에서 입력해주세요.');
+                    return false;
+                }
+                
+                evaluationData.peerEvaluations.push({
+                    evaluatee: members[i],
+                    filmingScore: parseFloat(filmingScore),
+                    editingScore: parseFloat(editingScore)
+                });
+            }
+            
+            return true;
+        }
+        
+        // 타 조 작품 평가 폼 생성
+        function createTeamWorkEvaluationForms() {
+            const container = document.getElementById('teamWorkEvaluationContainer');
+            container.innerHTML = '';
+            
+            const myTeam = evaluationData.studentTeam;
+            const allTeams = ['1팀', '2팀', '3팀', '4팀', '5팀'];
+            const otherTeams = allTeams.filter(t => t !== myTeam);
+            
+            otherTeams.forEach((team, index) => {
+                const div = document.createElement('div');
+                div.className = 'evaluation-item';
+                div.innerHTML = `
+                    <h3>${team} 작품 평가</h3>
+                    <div class="form-group">
+                        <label>화면 안정성 및 구도 창의성 (0~6점) <span class="required">*</span></label>
+                        <div class="score-input-group">
+                            <input type="number" id="team_screen_${index}" min="0" max="6" step="0.5" placeholder="0~6" required>
+                            <span class="score-label">/ 6점</span>
+                        </div>
+                        <p style="font-size: 12px; color: #666; margin-top: 5px;">촬영 화면이 안정적이고 구도가 창의적인가요?</p>
+                    </div>
+                    <div class="form-group">
+                        <label>재미, 완성도, 주제 전달력 (0~9점) <span class="required">*</span></label>
+                        <div class="score-input-group">
+                            <input type="number" id="team_content_${index}" min="0" max="9" step="0.5" placeholder="0~9" required>
+                            <span class="score-label">/ 9점</span>
+                        </div>
+                        <p style="font-size: 12px; color: #666; margin-top: 5px;">영상이 재미있고 완성도가 높으며 주제가 명확한가요?</p>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        // 타 조 평가 데이터 수집
+        function collectTeamWorkEvaluations() {
+            const myTeam = evaluationData.studentTeam;
+            const allTeams = ['1팀', '2팀', '3팀', '4팀', '5팀'];
+            const otherTeams = allTeams.filter(t => t !== myTeam);
+            
+            evaluationData.teamWorkEvaluations = [];
+            
+            for (let i = 0; i < otherTeams.length; i++) {
+                const screenScore = document.getElementById(`team_screen_${i}`).value;
+                const contentScore = document.getElementById(`team_content_${i}`).value;
+                
+                if (!screenScore || !contentScore) {
+                    return false;
+                }
+                
+                if (screenScore < 0 || screenScore > 6 || contentScore < 0 || contentScore > 9) {
+                    alert('점수는 지정된 범위 내에서 입력해주세요.');
+                    return false;
+                }
+                
+                evaluationData.teamWorkEvaluations.push({
+                    team: otherTeams[i],
+                    screenScore: parseFloat(screenScore),
+                    contentScore: parseFloat(contentScore)
+                });
+            }
+            
+            return true;
+        }
+        
+        // 최종 제출
+        function submitEvaluation() {
+            if (!collectTeamWorkEvaluations()) {
+                alert('모든 팀에 대한 평가를 완료해주세요.');
+                return;
+            }
+            
+            // Google Apps Script로 데이터 전송
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbyCfgfDTO5NgHvvH6xfkhuIoMYVTz5sxD4iRO9vS8adnJElnYSFZkOuh3-qGaJhxwXMGA/exec'; // 여기에 실제 URL 입력
+            
+            fetch(scriptURL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(evaluationData)
+            })
+            .then(() => {
+                goToStep(4);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('제출 중 오류가 발생했습니다. 다시 시도해주세요.');
+            });
+        }
+    </script>
+</body>
+</html>
