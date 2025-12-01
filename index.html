@@ -248,11 +248,11 @@
                     <label>소속 팀 <span class="required">*</span></label>
                     <select id="studentTeam" required>
                         <option value="">팀을 선택하세요</option>
-                        <option value="1팀">1팀</option>
-                        <option value="2팀">2팀</option>
-                        <option value="3팀">3팀</option>
-                        <option value="4팀">4팀</option>
-                        <option value="5팀">5팀</option>
+                        <option value="한서1">한서1</option>
+                        <option value="한서2">한서2</option>
+                        <option value="명덕여고">명덕여고</option>
+                        <option value="세현고">세현고</option>
+                        <option value="공항고">공항고</option>
                     </select>
                 </div>
                 
@@ -314,11 +314,11 @@
     <script>
         // 팀별 학생 명단
         const teamMembers = {
-            '1팀': ['이예지', '김수현', '이윤제', '전유하', '김경록'],
-            '2팀': ['김가현', '김태희', '이채현', '장채희'],
-            '3팀': ['신지은', '은현아', '최수현', '오예진'],
-            '4팀': ['윤별', '황예지'],
-            '5팀': ['박아현', '김규빈', '김지성', '정재윤']
+            '한서1': ['이예지', '김수현', '이윤제', '전유하', '김경록'],
+            '한서2': ['김가현', '김태희', '이채현', '장채희'],
+            '명덕여고': ['신지은', '은현아', '최수현', '오예진'],
+            '세현고': ['윤별', '황예지'],
+            '공항고': ['박아현', '김규빈', '김지성', '정재윤']
         };
         
         let currentStep = 1;
@@ -392,19 +392,23 @@
                 div.innerHTML = `
                     <h3>${member} 평가</h3>
                     <div class="form-group">
-                        <label>촬영 과정 참여도 (0~6점) <span class="required">*</span></label>
-                        <div class="score-input-group">
-                            <input type="number" id="peer_filming_${index}" min="0" max="6" step="1" placeholder="0~6" required>
-                            <span class="score-label">/ 6점</span>
-                        </div>
+                        <label>촬영 과정 참여도 (6점) <span class="required">*</span></label>
+                        <select id="peer_filming_${index}" required style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px;">
+                            <option value="">선택하세요</option>
+                            <option value="6">6점 - 매우 적극적으로 참여함</option>
+                            <option value="4">4점 - 보통 수준으로 참여함</option>
+                            <option value="2">2점 - 소극적으로 참여함</option>
+                        </select>
                         <p style="font-size: 12px; color: #666; margin-top: 5px;">촬영 계획, 장소 섭외, 촬영 진행 등</p>
                     </div>
                     <div class="form-group">
-                        <label>편집 작업 기여도 (0~9점) <span class="required">*</span></label>
-                        <div class="score-input-group">
-                            <input type="number" id="peer_editing_${index}" min="0" max="9" step="1" placeholder="0~9" required>
-                            <span class="score-label">/ 9점</span>
-                        </div>
+                        <label>편집 작업 기여도 (9점) <span class="required">*</span></label>
+                        <select id="peer_editing_${index}" required style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px;">
+                            <option value="">선택하세요</option>
+                            <option value="9">9점 - 매우 적극적으로 기여함</option>
+                            <option value="7">7점 - 보통 수준으로 기여함</option>
+                            <option value="5">5점 - 소극적으로 기여함</option>
+                        </select>
                         <p style="font-size: 12px; color: #666; margin-top: 5px;">영상 편집, 자막 작업, 효과 추가 등</p>
                     </div>
                 `;
@@ -428,11 +432,6 @@
                     return false;
                 }
                 
-                if (filmingScore < 0 || filmingScore > 6 || editingScore < 0 || editingScore > 9) {
-                    alert('점수는 지정된 범위 내에서 입력해주세요.');
-                    return false;
-                }
-                
                 evaluationData.peerEvaluations.push({
                     evaluatee: members[i],
                     filmingScore: parseFloat(filmingScore),
@@ -449,7 +448,7 @@
             container.innerHTML = '';
             
             const myTeam = evaluationData.studentTeam;
-            const allTeams = ['1팀', '2팀', '3팀', '4팀', '5팀'];
+            const allTeams = ['한서1', '한서2', '명덕여고', '세현고', '공항고'];
             const otherTeams = allTeams.filter(t => t !== myTeam);
             
             otherTeams.forEach((team, index) => {
@@ -458,20 +457,22 @@
                 div.innerHTML = `
                     <h3>${team} 작품 평가</h3>
                     <div class="form-group">
-                        <label>화면 안정성 및 구도 창의성 (0~6점) <span class="required">*</span></label>
-                        <div class="score-input-group">
-                            <input type="number" id="team_screen_${index}" min="0" max="6" step="0.5" placeholder="0~6" required>
-                            <span class="score-label">/ 6점</span>
-                        </div>
-                        <p style="font-size: 12px; color: #666; margin-top: 5px;">촬영 화면이 안정적이고 구도가 창의적인가요?</p>
+                        <label>화면 안정성 및 구도 창의성 (6점) <span class="required">*</span></label>
+                        <select id="team_screen_${index}" required style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px;">
+                            <option value="">선택하세요</option>
+                            <option value="6">6점 - 매우 우수함 (화면이 안정적이고 구도가 창의적임)</option>
+                            <option value="4">4점 - 보통 수준 (화면이 대체로 안정적이고 구도가 무난함)</option>
+                            <option value="2">2점 - 미흡함 (화면이 흔들리거나 구도가 평범함)</option>
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label>재미, 완성도, 주제 전달력 (0~9점) <span class="required">*</span></label>
-                        <div class="score-input-group">
-                            <input type="number" id="team_content_${index}" min="0" max="9" step="0.5" placeholder="0~9" required>
-                            <span class="score-label">/ 9점</span>
-                        </div>
-                        <p style="font-size: 12px; color: #666; margin-top: 5px;">영상이 재미있고 완성도가 높으며 주제가 명확한가요?</p>
+                        <label>재미, 완성도, 주제 전달력 (9점) <span class="required">*</span></label>
+                        <select id="team_content_${index}" required style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px;">
+                            <option value="">선택하세요</option>
+                            <option value="9">9점 - 매우 우수함 (재미있고 완성도가 높으며 주제가 명확함)</option>
+                            <option value="7">7점 - 보통 수준 (재미와 완성도가 무난하고 주제가 전달됨)</option>
+                            <option value="5">5점 - 미흡함 (재미나 완성도가 부족하거나 주제가 불명확함)</option>
+                        </select>
                     </div>
                 `;
                 container.appendChild(div);
@@ -481,7 +482,7 @@
         // 타 조 평가 데이터 수집
         function collectTeamWorkEvaluations() {
             const myTeam = evaluationData.studentTeam;
-            const allTeams = ['1팀', '2팀', '3팀', '4팀', '5팀'];
+            const allTeams = ['한서1', '한서2', '명덕여고', '세현고', '공항고'];
             const otherTeams = allTeams.filter(t => t !== myTeam);
             
             evaluationData.teamWorkEvaluations = [];
@@ -491,11 +492,6 @@
                 const contentScore = document.getElementById(`team_content_${i}`).value;
                 
                 if (!screenScore || !contentScore) {
-                    return false;
-                }
-                
-                if (screenScore < 0 || screenScore > 6 || contentScore < 0 || contentScore > 9) {
-                    alert('점수는 지정된 범위 내에서 입력해주세요.');
                     return false;
                 }
                 
@@ -517,7 +513,7 @@
             }
             
             // Google Apps Script로 데이터 전송
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbyCfgfDTO5NgHvvH6xfkhuIoMYVTz5sxD4iRO9vS8adnJElnYSFZkOuh3-qGaJhxwXMGA/exec'; // 여기에 실제 URL 입력
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbyeYHTOa5ykN4D_bDO6oBsOshMgZFIZMXkhfQ0KD6lRWaS-PdHVQPsopfQzd6P9V1V6TA/exec'; // 여기에 실제 URL 입력
             
             fetch(scriptURL, {
                 method: 'POST',
